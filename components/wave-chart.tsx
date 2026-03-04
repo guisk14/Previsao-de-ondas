@@ -183,54 +183,57 @@ export function WaveChart({ beach }: WaveChartProps) {
 
       {/* Stats bar below chart */}
       <div className="flex items-center justify-between mt-4 mb-2 px-1">
-        <span className="text-xs font-mono text-muted-foreground">
-          Arraste no grafico para atualizar os dados abaixo
+        <span className="text-[10px] sm:text-xs font-mono text-muted-foreground">
+          Arraste no grafico para atualizar os dados
         </span>
-        <span className="text-xs font-mono font-bold text-primary">
+        <span className="text-[10px] sm:text-xs font-mono font-bold text-primary">
           {activeLabel}
         </span>
       </div>
-      <div className="flex overflow-x-auto gap-0 border border-border rounded-lg">
-        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground whitespace-nowrap">
-            Altura Significativa
+      <div className="grid grid-cols-4 border border-border rounded-lg overflow-hidden">
+        <div className="flex flex-col items-center justify-center py-2.5 sm:py-3 px-1 sm:px-3 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[8px] sm:text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+            <span className="sm:hidden">Altura</span>
+            <span className="hidden sm:inline">Altura Significativa</span>
           </span>
-          <span className="text-2xl font-bold text-foreground leading-tight mt-1">
+          <span className="text-lg sm:text-2xl font-bold text-foreground leading-tight mt-0.5 sm:mt-1">
             {activeData.waveHeight}
           </span>
-          <span className="text-xs text-muted-foreground">m</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground">m</span>
         </div>
-        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground whitespace-nowrap">
-            Periodo de Pico
+        <div className="flex flex-col items-center justify-center py-2.5 sm:py-3 px-1 sm:px-3 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[8px] sm:text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+            <span className="sm:hidden">Periodo</span>
+            <span className="hidden sm:inline">Periodo de Pico</span>
           </span>
-          <span className="text-2xl font-bold text-foreground leading-tight mt-1">
+          <span className="text-lg sm:text-2xl font-bold text-foreground leading-tight mt-0.5 sm:mt-1">
             {activeData.wavePeriod}
           </span>
-          <span className="text-xs text-muted-foreground">s</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground">s</span>
         </div>
-        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground whitespace-nowrap">
-            Direcao de Pico
+        <div className="flex flex-col items-center justify-center py-2.5 sm:py-3 px-1 sm:px-3 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[8px] sm:text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+            <span className="sm:hidden">Direcao</span>
+            <span className="hidden sm:inline">Direcao de Pico</span>
           </span>
-          <div className="flex items-center gap-1 mt-1">
+          <div className="flex items-center gap-0.5 sm:gap-1 mt-0.5 sm:mt-1">
             <span className="text-muted-foreground">{DIRECTION_ICONS[activeData.waveDirection]}</span>
-            <span className="text-2xl font-bold text-foreground leading-tight">
+            <span className="text-lg sm:text-2xl font-bold text-foreground leading-tight">
               {activeData.waveDirection}
             </span>
           </div>
         </div>
-        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">
+        <div className="flex flex-col items-center justify-center py-2.5 sm:py-3 px-1 sm:px-3 bg-background">
+          <span className="text-[8px] sm:text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
             Vento
           </span>
-          <div className="flex items-center gap-1.5 mt-1">
+          <div className="flex items-center gap-0.5 sm:gap-1.5 mt-0.5 sm:mt-1">
             <span className="text-muted-foreground">{DIRECTION_ICONS[activeData.windDirection]}</span>
-            <span className="text-2xl font-bold text-foreground leading-tight">
+            <span className="text-lg sm:text-2xl font-bold text-foreground leading-tight">
               {activeData.windSpeed}
             </span>
           </div>
-          <span className="text-[10px] text-muted-foreground">km/h {activeData.windDirection}</span>
+          <span className="text-[8px] sm:text-[10px] text-muted-foreground">km/h {activeData.windDirection}</span>
         </div>
       </div>
     </div>
