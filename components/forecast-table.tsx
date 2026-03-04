@@ -38,9 +38,7 @@ export function ForecastTable({ beach }: ForecastTableProps) {
               <TableHead className="text-muted-foreground font-medium">Ondas (m)</TableHead>
               <TableHead className="text-muted-foreground font-medium">Periodo (s)</TableHead>
               <TableHead className="text-muted-foreground font-medium">Dir. Ondas</TableHead>
-              <TableHead className="text-muted-foreground font-medium">Vento (km/h)</TableHead>
-              <TableHead className="text-muted-foreground font-medium">Dir. Vento</TableHead>
-              <TableHead className="text-muted-foreground font-medium">Temp</TableHead>
+              <TableHead className="text-muted-foreground font-medium">Vento</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -60,12 +58,14 @@ export function ForecastTable({ beach }: ForecastTableProps) {
                 <TableCell className="font-mono text-card-foreground">{entry.wavePeriod}</TableCell>
                 <TableCell className="text-muted-foreground">{entry.waveDirection}</TableCell>
                 <TableCell>
-                  <span className={`font-mono ${getWindColor(entry.windSpeed)}`}>
-                    {entry.windSpeed}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`font-mono ${getWindColor(entry.windSpeed)}`}>
+                      {entry.windSpeed}
+                    </span>
+                    <span className="text-xs text-muted-foreground">km/h</span>
+                    <span className="font-mono font-bold text-card-foreground">{entry.windDirection}</span>
+                  </div>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{entry.windDirection}</TableCell>
-                <TableCell className="font-mono text-card-foreground">{entry.temperature}°C</TableCell>
               </TableRow>
             ))}
           </TableBody>
