@@ -190,9 +190,9 @@ export function WaveChart({ beach }: WaveChartProps) {
           {activeLabel}
         </span>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 border border-border rounded-lg overflow-hidden">
-        <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+      <div className="flex overflow-x-auto gap-0 border border-border rounded-lg">
+        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground whitespace-nowrap">
             Altura Significativa
           </span>
           <span className="text-2xl font-bold text-foreground leading-tight mt-1">
@@ -200,8 +200,8 @@ export function WaveChart({ beach }: WaveChartProps) {
           </span>
           <span className="text-xs text-muted-foreground">m</span>
         </div>
-        <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground whitespace-nowrap">
             Periodo de Pico
           </span>
           <span className="text-2xl font-bold text-foreground leading-tight mt-1">
@@ -209,8 +209,8 @@ export function WaveChart({ beach }: WaveChartProps) {
           </span>
           <span className="text-xs text-muted-foreground">s</span>
         </div>
-        <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground whitespace-nowrap">
             Direcao de Pico
           </span>
           <div className="flex items-center gap-1 mt-1">
@@ -220,8 +220,8 @@ export function WaveChart({ beach }: WaveChartProps) {
             </span>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center py-3 px-2 bg-background">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
+        <div className="flex-1 min-w-0 flex flex-col items-center justify-center py-3 px-2 bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">
             Vento
           </span>
           <div className="flex items-center gap-1.5 mt-1">
@@ -229,8 +229,8 @@ export function WaveChart({ beach }: WaveChartProps) {
             <span className="text-2xl font-bold text-foreground leading-tight">
               {activeData.windSpeed}
             </span>
-            <span className="text-xs text-muted-foreground self-end mb-0.5">km/h {activeData.windDirection}</span>
           </div>
+          <span className="text-[10px] text-muted-foreground">km/h {activeData.windDirection}</span>
         </div>
       </div>
     </div>
