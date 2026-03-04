@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Waves, Wind, Timer, Star, ArrowUp, ArrowDown } from "lucide-react"
 import { type Beach, getRatingLabel, getRatingColor, tides } from "@/lib/wave-data"
 
@@ -19,7 +22,11 @@ function getNextTide() {
 }
 
 export function CurrentConditions({ beach }: CurrentConditionsProps) {
-  const nextTide = getNextTide()
+  const [nextTide, setNextTide] = useState(tides[0])
+
+  useEffect(() => {
+    setNextTide(getNextTide())
+  }, [])
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">

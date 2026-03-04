@@ -31,31 +31,51 @@ export interface TideEntry {
 
 const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
 
-const generateForecast = (): ForecastHour[] => {
+// Deterministic pseudo-random to avoid hydration mismatch
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000
+  return x - Math.floor(x)
+}
+
+const generateForecast = (beachSeed: number): ForecastHour[] => {
   const directions = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"]
   const hours = [0, 3, 6, 9, 12, 15, 18, 21]
   const entries: ForecastHour[] = []
-  const today = new Date()
+  // Use a fixed base date (March 4, 2026) to avoid server/client mismatch
+  const base = new Date(2026, 2, 4)
+  let seed = beachSeed
 
   for (let d = 0; d < 5; d++) {
-    const date = new Date(today)
-    date.setDate(today.getDate() + d)
+    const date = new Date(base)
+    date.setDate(base.getDate() + d)
     const dayName = DAY_NAMES[date.getDay()]
     const dayNum = date.getDate()
     const dayLabel = `${dayName} (${dayNum})`
 
     for (const h of hours) {
-      const baseHeight = 0.6 + Math.sin((d * 6 + h) * 0.18) * 0.6 + Math.random() * 0.4
+      seed++
+      const r1 = seededRandom(seed)
+      seed++
+      const r2 = seededRandom(seed)
+      seed++
+      const r3 = seededRandom(seed)
+      seed++
+      const r4 = seededRandom(seed)
+      seed++
+      const r5 = seededRandom(seed)
+      seed++
+      const r6 = seededRandom(seed)
+      const baseHeight = 0.6 + Math.sin((d * 6 + h) * 0.18) * 0.6 + r1 * 0.4
       entries.push({
         hour: `${String(h).padStart(2, "0")}h`,
         dayLabel,
         dayIndex: d,
         waveHeight: +Math.max(0.2, baseHeight).toFixed(1),
-        wavePeriod: +(Math.random() * 8 + 6).toFixed(1),
-        waveDirection: directions[Math.floor(Math.random() * directions.length)],
-        windSpeed: Math.floor(Math.random() * 20 + 5),
-        windDirection: directions[Math.floor(Math.random() * directions.length)],
-        temperature: Math.floor(Math.random() * 6 + 14),
+        wavePeriod: +(r2 * 8 + 6).toFixed(1),
+        waveDirection: directions[Math.floor(r3 * directions.length)],
+        windSpeed: Math.floor(r4 * 20 + 5),
+        windDirection: directions[Math.floor(r5 * directions.length)],
+        temperature: Math.floor(r6 * 6 + 14),
       })
     }
   }
@@ -73,7 +93,7 @@ export const beaches: Beach[] = [
     windDirection: "N",
     waterTemp: 16,
     rating: 5,
-    forecast: generateForecast(),
+    forecast: generateForecast(100),
   },
   {
     id: "ericeira-ribeira-dilhas",
@@ -85,7 +105,7 @@ export const beaches: Beach[] = [
     windDirection: "NE",
     waterTemp: 17,
     rating: 4,
-    forecast: generateForecast(),
+    forecast: generateForecast(200),
   },
   {
     id: "nazare-praia-norte",
@@ -97,7 +117,7 @@ export const beaches: Beach[] = [
     windDirection: "NO",
     waterTemp: 15,
     rating: 3,
-    forecast: generateForecast(),
+    forecast: generateForecast(300),
   },
   {
     id: "sagres-tonel",
@@ -109,7 +129,7 @@ export const beaches: Beach[] = [
     windDirection: "O",
     waterTemp: 18,
     rating: 4,
-    forecast: generateForecast(),
+    forecast: generateForecast(400),
   },
   {
     id: "costa-caparica",
@@ -121,7 +141,7 @@ export const beaches: Beach[] = [
     windDirection: "NO",
     waterTemp: 17,
     rating: 3,
-    forecast: generateForecast(),
+    forecast: generateForecast(500),
   },
   {
     id: "espinho-praia",
@@ -133,7 +153,7 @@ export const beaches: Beach[] = [
     windDirection: "N",
     waterTemp: 15,
     rating: 4,
-    forecast: generateForecast(),
+    forecast: generateForecast(600),
   },
 ]
 
