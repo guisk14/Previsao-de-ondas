@@ -33,15 +33,12 @@ export function ForecastTable({ beach }: ForecastTableProps) {
               <TableHead className="text-muted-foreground font-medium">Dir. Ondas</TableHead>
               <TableHead className="text-muted-foreground font-medium">Vento (km/h)</TableHead>
               <TableHead className="text-muted-foreground font-medium">Dir. Vento</TableHead>
-              <TableHead className="text-muted-foreground font-medium">Temp</TableHead>
+              <TableHead className="text-muted-foreground font-medium">Temp (°C)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {beach.forecast.map((entry, index) => (
-              <TableRow
-                key={index}
-                className="border-border hover:bg-secondary/50 transition-colors"
-              >
+              <TableRow key={index} className="border-border hover:bg-secondary/50 transition-colors">
                 <TableCell className="font-mono font-medium text-card-foreground">
                   {entry.hour}
                 </TableCell>
@@ -50,9 +47,7 @@ export function ForecastTable({ beach }: ForecastTableProps) {
                     {entry.waveHeight}
                   </span>
                 </TableCell>
-                <TableCell className="font-mono text-card-foreground">
-                  {entry.wavePeriod}
-                </TableCell>
+                <TableCell className="font-mono text-card-foreground">{entry.wavePeriod}</TableCell>
                 <TableCell className="text-muted-foreground">{entry.waveDirection}</TableCell>
                 <TableCell>
                   <span className={`font-mono ${getWindColor(entry.windSpeed)}`}>
@@ -60,9 +55,7 @@ export function ForecastTable({ beach }: ForecastTableProps) {
                   </span>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{entry.windDirection}</TableCell>
-                <TableCell className="font-mono text-card-foreground">
-                  {entry.temperature}°C
-                </TableCell>
+                <TableCell className="font-mono text-card-foreground">{entry.temperature}</TableCell>
               </TableRow>
             ))}
           </TableBody>

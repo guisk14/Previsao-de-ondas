@@ -17,71 +17,57 @@ interface WaveChartProps {
 
 export function WaveChart({ beach }: WaveChartProps) {
   const data = beach.forecast.map((entry) => ({
-    hora: entry.hour,
-    "Altura (m)": entry.waveHeight,
-    "Periodo (s)": entry.wavePeriod,
+    hour: entry.hour,
+    ondas: entry.waveHeight,
+    vento: entry.windSpeed,
   }))
 
   return (
     <div className="bg-card rounded-xl border border-border p-5">
-      <div className="mb-4">
-        <h3 className="font-mono font-bold text-card-foreground">
-          Grafico de Ondas
-        </h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Altura e periodo ao longo do dia
-        </p>
-      </div>
-      <div className="h-64 md:h-80 w-full">
+      <h3 className="font-mono font-bold text-card-foreground mb-1">
+        Grafico de Ondas
+      </h3>
+      <p className="text-sm text-muted-foreground mb-6">
+        Evolucao da altura das ondas ao longo do dia
+      </p>
+      <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
             <defs>
-              <linearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0.05} />
-              </linearGradient>
-              <linearGradient id="periodGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0.05} />
+              <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="oklch(0.45 0.15 220)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="oklch(0.45 0.15 220)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.9 0.02 220)" />
             <XAxis
-              dataKey="hora"
-              tick={{ fontSize: 12 }}
-              className="fill-muted-foreground"
-              axisLine={false}
+              dataKey="hour"
+              tick={{ fill: "oklch(0.5 0.03 220)", fontSize: 12 }}
+              axisLine={{ stroke: "oklch(0.9 0.02 220)" }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 12 }}
-              className="fill-muted-foreground"
+              tick={{ fill: "oklch(0.5 0.03 220)", fontSize: 12 }}
               axisLine={false}
               tickLine={false}
-              width={35}
+              unit="m"
             />
             <Tooltip
               contentStyle={{
-                borderRadius: "0.75rem",
-                border: "1px solid var(--border)",
-                backgroundColor: "var(--card)",
-                color: "var(--card-foreground)",
-                fontSize: "0.875rem",
+                backgroundColor: "oklch(0.995 0.002 220)",
+                border: "1px solid oklch(0.9 0.02 220)",
+                borderRadius: "8px",
+                fontSize: "13px",
               }}
+              labelStyle={{ fontWeight: "bold", color: "oklch(0.15 0.02 230)" }}
             />
             <Area
               type="monotone"
-              dataKey="Altura (m)"
-              stroke="var(--chart-1)"
-              strokeWidth={2}
-              fill="url(#waveGrad)"
-            />
-            <Area
-              type="monotone"
-              dataKey="Periodo (s)"
-              stroke="var(--chart-2)"
-              strokeWidth={2}
-              fill="url(#periodGrad)"
+              dataKey="ondas"
+              stroke="oklch(0.45 0.15 220)"
+              strokeWidth={2.5}
+              fill="url(#waveGradient)"
+              name="Altura (m)"
             />
           </AreaChart>
         </ResponsiveContainer>

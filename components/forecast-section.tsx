@@ -23,8 +23,10 @@ export function ForecastSection() {
         <div className="flex flex-col gap-6">
           <SpotSelector selectedBeach={selectedBeach} onSelect={setSelectedBeach} />
           <CurrentConditions beach={selectedBeach} />
-          <WaveChart beach={selectedBeach} />
-          <ForecastTable beach={selectedBeach} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <WaveChart beach={selectedBeach} />
+            <ForecastTable beach={selectedBeach} />
+          </div>
         </div>
       </div>
     </section>
