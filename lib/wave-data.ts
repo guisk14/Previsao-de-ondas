@@ -19,7 +19,7 @@ export interface Beach {
   currentWind: number
   windDirection: string
   waterTemp: number
-  rating: number // 1-5
+  rating: number
   forecast: ForecastHour[]
 }
 
@@ -29,58 +29,99 @@ export interface TideEntry {
   type: "alta" | "baixa"
 }
 
-const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
+const DAYS = [
+  { label: "Qua (4)", index: 0 },
+  { label: "Qui (5)", index: 1 },
+  { label: "Sex (6)", index: 2 },
+  { label: "Sab (7)", index: 3 },
+  { label: "Dom (8)", index: 4 },
+]
 
-// Deterministic pseudo-random to avoid hydration mismatch
-function seededRandom(seed: number) {
-  const x = Math.sin(seed) * 10000
-  return x - Math.floor(x)
-}
+const HOURS = ["00h", "03h", "06h", "09h", "12h", "15h", "18h", "21h"]
+const DIRS = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"]
 
-const generateForecast = (beachSeed: number): ForecastHour[] => {
-  const directions = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"]
-  const hours = [0, 3, 6, 9, 12, 15, 18, 21]
+function buildForecast(
+  heights: number[],
+  periods: number[],
+  waveDirs: number[],
+  windSpeeds: number[],
+  windDirs: number[],
+  temps: number[],
+): ForecastHour[] {
   const entries: ForecastHour[] = []
-  // Use a fixed base date (March 4, 2026) to avoid server/client mismatch
-  const base = new Date(2026, 2, 4)
-  let seed = beachSeed
-
-  for (let d = 0; d < 5; d++) {
-    const date = new Date(base)
-    date.setDate(base.getDate() + d)
-    const dayName = DAY_NAMES[date.getDay()]
-    const dayNum = date.getDate()
-    const dayLabel = `${dayName} (${dayNum})`
-
-    for (const h of hours) {
-      seed++
-      const r1 = seededRandom(seed)
-      seed++
-      const r2 = seededRandom(seed)
-      seed++
-      const r3 = seededRandom(seed)
-      seed++
-      const r4 = seededRandom(seed)
-      seed++
-      const r5 = seededRandom(seed)
-      seed++
-      const r6 = seededRandom(seed)
-      const baseHeight = 0.6 + Math.sin((d * 6 + h) * 0.18) * 0.6 + r1 * 0.4
+  let i = 0
+  for (const day of DAYS) {
+    for (const hour of HOURS) {
       entries.push({
-        hour: `${String(h).padStart(2, "0")}h`,
-        dayLabel,
-        dayIndex: d,
-        waveHeight: +Math.max(0.2, baseHeight).toFixed(1),
-        wavePeriod: +(r2 * 8 + 6).toFixed(1),
-        waveDirection: directions[Math.floor(r3 * directions.length)],
-        windSpeed: Math.floor(r4 * 20 + 5),
-        windDirection: directions[Math.floor(r5 * directions.length)],
-        temperature: Math.floor(r6 * 6 + 14),
+        hour,
+        dayLabel: day.label,
+        dayIndex: day.index,
+        waveHeight: heights[i],
+        wavePeriod: periods[i],
+        waveDirection: DIRS[waveDirs[i]],
+        windSpeed: windSpeeds[i],
+        windDirection: DIRS[windDirs[i]],
+        temperature: temps[i],
       })
+      i++
     }
   }
   return entries
 }
+
+const supertubosData = buildForecast(
+  [1.8,1.6,1.4,1.2,1.5,1.9,2.1,1.8, 1.7,1.5,1.3,1.6,2.0,2.3,2.1,1.9, 1.8,1.6,1.9,2.2,2.5,2.4,2.0,1.7, 1.5,1.3,1.1,1.4,1.8,2.0,1.9,1.6, 1.4,1.2,1.0,1.3,1.7,1.9,1.8,1.5],
+  [12,11,10,10,11,12,13,12, 11,10,10,11,12,13,13,12, 12,11,12,13,14,14,13,12, 11,10,9,10,11,12,12,11, 10,9,9,10,11,12,11,10],
+  [0,0,1,1,0,7,7,0, 1,1,0,0,7,7,0,0, 0,1,1,0,7,7,0,0, 0,0,1,1,0,7,7,0, 1,1,0,0,7,7,0,0],
+  [15,12,10,8,10,14,16,18, 14,11,9,7,11,15,17,16, 13,10,8,9,12,16,18,15, 16,13,11,9,10,14,17,19, 18,15,12,10,11,13,16,18],
+  [0,0,1,1,0,7,7,0, 0,1,1,0,7,7,0,0, 0,0,1,1,0,7,7,0, 0,0,1,1,0,7,7,0, 0,1,1,0,7,7,0,0],
+  [16,15,15,16,17,17,16,15, 16,15,15,16,17,17,16,15, 16,16,16,17,17,17,16,16, 15,15,15,16,16,16,15,15, 15,15,15,16,16,16,15,15],
+)
+
+const ribeiraData = buildForecast(
+  [1.5,1.3,1.1,1.0,1.2,1.6,1.8,1.5, 1.4,1.2,1.0,1.3,1.7,2.0,1.8,1.6, 1.5,1.3,1.6,1.9,2.2,2.1,1.7,1.4, 1.2,1.0,0.9,1.1,1.5,1.7,1.6,1.3, 1.1,0.9,0.8,1.0,1.4,1.6,1.5,1.2],
+  [10,9,9,10,11,12,11,10, 10,9,9,10,11,12,12,11, 11,10,11,12,13,13,12,11, 10,9,8,9,10,11,11,10, 9,8,8,9,10,11,10,9],
+  [1,1,2,2,1,0,0,1, 1,2,2,1,0,0,1,1, 1,1,2,1,0,0,1,1, 1,1,2,2,1,0,0,1, 1,2,2,1,0,0,1,1],
+  [12,10,8,6,9,13,15,14, 11,9,7,5,10,14,16,13, 10,8,6,7,11,15,17,12, 13,11,9,7,8,12,15,16, 15,12,10,8,9,11,14,16],
+  [1,1,0,0,1,7,7,1, 1,0,0,1,7,7,1,1, 1,1,0,0,7,7,1,1, 1,1,0,0,1,7,7,1, 1,0,0,1,7,7,1,1],
+  [17,16,16,17,18,18,17,16, 17,16,16,17,18,18,17,16, 17,17,17,18,18,18,17,17, 16,16,16,17,17,17,16,16, 16,16,16,17,17,17,16,16],
+)
+
+const nazareData = buildForecast(
+  [3.2,2.8,2.5,2.3,2.7,3.5,3.8,3.3, 3.0,2.6,2.3,2.8,3.4,3.9,3.6,3.1, 2.9,2.5,3.0,3.5,4.0,3.7,3.2,2.8, 2.5,2.2,1.9,2.4,3.0,3.4,3.1,2.7, 2.3,2.0,1.8,2.2,2.8,3.2,2.9,2.5],
+  [15,14,13,13,14,15,16,15, 14,13,13,14,15,16,16,15, 15,14,15,16,17,17,16,15, 14,13,12,13,14,15,15,14, 13,12,12,13,14,15,14,13],
+  [7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7, 7,7,0,7,6,6,7,7, 7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7],
+  [20,17,14,12,15,19,22,24, 18,15,12,10,16,20,23,21, 17,14,11,13,17,21,24,19, 21,18,15,12,14,18,22,25, 23,20,16,13,15,18,21,24],
+  [7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7, 7,7,0,0,6,6,7,7, 7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7],
+  [15,14,14,15,16,16,15,14, 15,14,14,15,16,16,15,14, 15,15,15,16,16,16,15,15, 14,14,14,15,15,15,14,14, 14,14,14,15,15,15,14,14],
+)
+
+const tonelData = buildForecast(
+  [1.2,1.0,0.9,0.8,1.0,1.3,1.5,1.2, 1.1,0.9,0.8,1.0,1.4,1.6,1.4,1.2, 1.1,1.0,1.2,1.5,1.8,1.6,1.3,1.1, 1.0,0.8,0.7,0.9,1.2,1.4,1.3,1.0, 0.9,0.7,0.6,0.8,1.1,1.3,1.2,0.9],
+  [9,8,8,9,10,11,10,9, 9,8,8,9,10,11,11,10, 10,9,10,11,12,12,11,10, 9,8,7,8,9,10,10,9, 8,7,7,8,9,10,9,8],
+  [6,6,5,5,6,7,7,6, 6,5,5,6,7,7,6,6, 6,6,5,6,7,7,6,6, 6,6,5,5,6,7,7,6, 6,5,5,6,7,7,6,6],
+  [18,15,12,10,13,17,20,22, 16,13,10,8,14,18,21,19, 15,12,9,11,15,19,22,17, 19,16,13,10,12,16,20,23, 21,18,14,11,13,16,19,22],
+  [6,6,5,5,6,7,7,6, 6,5,5,6,7,7,6,6, 6,6,5,5,7,7,6,6, 6,6,5,5,6,7,7,6, 6,5,5,6,7,7,6,6],
+  [18,17,17,18,19,19,18,17, 18,17,17,18,19,19,18,17, 18,18,18,19,19,19,18,18, 17,17,17,18,18,18,17,17, 17,17,17,18,18,18,17,17],
+)
+
+const caparicaData = buildForecast(
+  [1.0,0.8,0.7,0.6,0.8,1.1,1.3,1.0, 0.9,0.7,0.6,0.8,1.2,1.4,1.2,1.0, 0.9,0.8,1.0,1.3,1.6,1.4,1.1,0.9, 0.8,0.6,0.5,0.7,1.0,1.2,1.1,0.8, 0.7,0.5,0.4,0.6,0.9,1.1,1.0,0.7],
+  [8,7,7,8,9,10,9,8, 8,7,7,8,9,10,10,9, 9,8,9,10,11,11,10,9, 8,7,6,7,8,9,9,8, 7,6,6,7,8,9,8,7],
+  [7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7, 7,7,0,7,6,6,7,7, 7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7],
+  [10,8,6,5,7,11,13,12, 9,7,5,4,8,12,14,11, 8,6,5,6,9,13,15,10, 11,9,7,5,7,10,13,15, 13,10,8,6,8,10,12,14],
+  [7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7, 7,7,0,0,6,6,7,7, 7,7,0,0,7,6,6,7, 7,0,0,7,6,6,7,7],
+  [17,16,16,17,18,18,17,16, 17,16,16,17,18,18,17,16, 17,17,17,18,18,18,17,17, 16,16,16,17,17,17,16,16, 16,16,16,17,17,17,16,16],
+)
+
+const espinhoData = buildForecast(
+  [1.6,1.4,1.2,1.1,1.3,1.7,1.9,1.6, 1.5,1.3,1.1,1.4,1.8,2.1,1.9,1.7, 1.6,1.4,1.7,2.0,2.3,2.2,1.8,1.5, 1.3,1.1,1.0,1.2,1.6,1.8,1.7,1.4, 1.2,1.0,0.9,1.1,1.5,1.7,1.6,1.3],
+  [11,10,10,11,12,13,12,11, 11,10,10,11,12,13,13,12, 12,11,12,13,14,14,13,12, 11,10,9,10,11,12,12,11, 10,9,9,10,11,12,11,10],
+  [0,0,1,1,0,7,7,0, 0,1,1,0,7,7,0,0, 0,0,1,0,7,7,0,0, 0,0,1,1,0,7,7,0, 0,1,1,0,7,7,0,0],
+  [14,11,9,7,10,14,17,16, 13,10,8,6,11,15,18,14, 12,9,7,8,12,16,19,13, 15,12,10,8,9,13,16,18, 17,14,11,9,10,12,15,17],
+  [0,0,1,1,0,7,7,0, 0,1,1,0,7,7,0,0, 0,0,1,1,7,7,0,0, 0,0,1,1,0,7,7,0, 0,1,1,0,7,7,0,0],
+  [15,14,14,15,16,16,15,14, 15,14,14,15,16,16,15,14, 15,15,15,16,16,16,15,15, 14,14,14,15,15,15,14,14, 14,14,14,15,15,15,14,14],
+)
 
 export const beaches: Beach[] = [
   {
@@ -93,7 +134,7 @@ export const beaches: Beach[] = [
     windDirection: "N",
     waterTemp: 16,
     rating: 5,
-    forecast: generateForecast(100),
+    forecast: supertubosData,
   },
   {
     id: "ericeira-ribeira-dilhas",
@@ -105,7 +146,7 @@ export const beaches: Beach[] = [
     windDirection: "NE",
     waterTemp: 17,
     rating: 4,
-    forecast: generateForecast(200),
+    forecast: ribeiraData,
   },
   {
     id: "nazare-praia-norte",
@@ -117,7 +158,7 @@ export const beaches: Beach[] = [
     windDirection: "NO",
     waterTemp: 15,
     rating: 3,
-    forecast: generateForecast(300),
+    forecast: nazareData,
   },
   {
     id: "sagres-tonel",
@@ -129,7 +170,7 @@ export const beaches: Beach[] = [
     windDirection: "O",
     waterTemp: 18,
     rating: 4,
-    forecast: generateForecast(400),
+    forecast: tonelData,
   },
   {
     id: "costa-caparica",
@@ -141,7 +182,7 @@ export const beaches: Beach[] = [
     windDirection: "NO",
     waterTemp: 17,
     rating: 3,
-    forecast: generateForecast(500),
+    forecast: caparicaData,
   },
   {
     id: "espinho-praia",
@@ -153,7 +194,7 @@ export const beaches: Beach[] = [
     windDirection: "N",
     waterTemp: 15,
     rating: 4,
-    forecast: generateForecast(600),
+    forecast: espinhoData,
   },
 ]
 
