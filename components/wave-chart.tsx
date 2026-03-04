@@ -2,6 +2,7 @@
 
 import { useMemo } from "react"
 import { type Beach } from "@/lib/wave-data"
+import { ArrowUp, ArrowDown, ArrowUpRight, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpLeft, ArrowDownLeft } from "lucide-react"
 import {
   AreaChart,
   Area,
@@ -15,6 +16,17 @@ import {
 
 interface WaveChartProps {
   beach: Beach
+}
+
+const DIRECTION_ICONS: Record<string, React.ReactNode> = {
+  "N": <ArrowUp className="h-4 w-4" />,
+  "S": <ArrowDown className="h-4 w-4" />,
+  "E": <ArrowRight className="h-4 w-4" />,
+  "O": <ArrowLeft className="h-4 w-4" />,
+  "NE": <ArrowUpRight className="h-4 w-4" />,
+  "NO": <ArrowUpLeft className="h-4 w-4" />,
+  "SE": <ArrowDownRight className="h-4 w-4" />,
+  "SO": <ArrowDownLeft className="h-4 w-4" />,
 }
 
 export function WaveChart({ beach }: WaveChartProps) {
