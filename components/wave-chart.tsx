@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo } from "react"
 import { type Beach } from "@/lib/wave-data"
 import {
   AreaChart,
@@ -18,29 +18,29 @@ interface WaveChartProps {
 }
 
 export function WaveChart({ beach }: WaveChartProps) {
-  const [selectedDay, setSelectedDay] = useState(0)
+  const { chartData, dayBoundaries } = useMemo(() => {
+    const data = beach.forecast.map((entry, i) => ({
+      index: i,
+      label: `${entry.dayLabel.split(" ")[0]} ${entry.hour}`,
+      shortLabel: entry.hour,
+      dayLabel: entry.dayLabel,
+      dayIndex: entry.dayIndex,
+      ondas: entry.waveHeight,
+      vento: entry.windSpeed,
+    }))
 
-  const days = useMemo(() => {
-    const unique: { label: string; index: number }[] = []
-    const seen = new Set<number>()
-    for (const entry of beach.forecast) {
-      if (!seen.has(entry.dayIndex)) {
-        seen.add(entry.dayIndex)
-        unique.push({ label: entry.dayLabel, index: entry.dayIndex })
+    // Find first index of each day for day header labels and reference lines
+    const boundaries: { index: number; label: string }[] = []
+    let lastDay = -1
+    for (const d of data) {
+      if (d.dayIndex !== lastDay) {
+        lastDay = d.dayIndex
+        boundaries.push({ index: d.index, label: d.dayLabel })
       }
     }
-    return unique
-  }, [beach.forecast])
 
-  const filteredData = useMemo(() => {
-    return beach.forecast
-      .filter((entry) => entry.dayIndex === selectedDay)
-      .map((entry) => ({
-        hour: entry.hour,
-        ondas: entry.waveHeight,
-        vento: entry.windSpeed,
-      }))
-  }, [beach.forecast, selectedDay])
+    return { chartData: data, dayBoundaries: boundaries }
+  }, [beach.forecast])
 
   return (
     <div className="bg-card rounded-xl border border-border p-5">
@@ -48,63 +48,104 @@ export function WaveChart({ beach }: WaveChartProps) {
         Grafico de Ondas
       </h3>
       <p className="text-sm text-muted-foreground mb-4">
-        Selecione um dia para ver a evolucao das ondas
+        Previsao de 5 dias — altura das ondas (m)
       </p>
 
-      <div className="flex gap-1.5 mb-5 overflow-x-auto pb-1">
-        {days.map((day) => (
-          <button
+      {/* Day headers */}
+      <div className="flex mb-2 border-b border-border">
+        {dayBoundaries.map((day, i) => (
+          <div
             key={day.index}
-            onClick={() => setSelectedDay(day.index)}
-            className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer ${
-              selectedDay === day.index
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+            className="flex-1 text-center py-1.5 text-xs font-mono font-bold text-primary border-r border-border last:border-r-0"
           >
             {day.label}
-          </button>
+          </div>
         ))}
       </div>
 
-      <div className="h-64 w-full">
+      <div className="h-56 md:h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={filteredData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 10, right: 5, left: -15, bottom: 0 }}
+          >
             <defs>
-              <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="oklch(0.45 0.15 220)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="oklch(0.45 0.15 220)" stopOpacity={0} />
+              <linearGradient id="waveGrad5d" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="oklch(0.55 0.12 190)" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="oklch(0.55 0.12 190)" stopOpacity={0.02} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.9 0.02 220)" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="oklch(0.9 0.02 220)"
+              vertical={false}
+            />
             <XAxis
-              dataKey="hour"
-              tick={{ fill: "oklch(0.5 0.03 220)", fontSize: 12 }}
+              dataKey="index"
+              tick={({ x, y, payload }) => {
+                const entry = chartData[payload.value]
+                if (!entry) return <text />
+                // Show label only at 00h and 12h to avoid crowding
+                if (entry.shortLabel !== "00h" && entry.shortLabel !== "12h") {
+                  return <text />
+                }
+                return (
+                  <text
+                    x={x}
+                    y={y + 14}
+                    textAnchor="middle"
+                    fill="oklch(0.5 0.03 220)"
+                    fontSize={10}
+                  >
+                    {entry.shortLabel}
+                  </text>
+                )
+              }}
               axisLine={{ stroke: "oklch(0.9 0.02 220)" }}
               tickLine={false}
+              interval={0}
             />
             <YAxis
-              tick={{ fill: "oklch(0.5 0.03 220)", fontSize: 12 }}
+              tick={{ fill: "oklch(0.5 0.03 220)", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               unit="m"
+              width={40}
             />
             <Tooltip
               contentStyle={{
                 backgroundColor: "oklch(0.995 0.002 220)",
                 border: "1px solid oklch(0.9 0.02 220)",
                 borderRadius: "8px",
-                fontSize: "13px",
+                fontSize: "12px",
               }}
-              labelStyle={{ fontWeight: "bold", color: "oklch(0.15 0.02 230)" }}
+              labelFormatter={(value) => {
+                const entry = chartData[value as number]
+                return entry ? `${entry.dayLabel} - ${entry.shortLabel}` : ""
+              }}
+              formatter={(value: number, name: string) => {
+                if (name === "ondas") return [`${value} m`, "Altura"]
+                return [value, name]
+              }}
             />
+            {/* Day separator lines */}
+            {dayBoundaries.slice(1).map((day) => (
+              <ReferenceLine
+                key={`sep-${day.index}`}
+                x={day.index}
+                stroke="oklch(0.75 0.02 220)"
+                strokeDasharray="4 4"
+                strokeWidth={1}
+              />
+            ))}
             <Area
               type="monotone"
               dataKey="ondas"
               stroke="oklch(0.45 0.15 220)"
-              strokeWidth={2.5}
-              fill="url(#waveGradient)"
-              name="Altura (m)"
+              strokeWidth={2}
+              fill="url(#waveGrad5d)"
+              name="ondas"
+              animationDuration={800}
             />
           </AreaChart>
         </ResponsiveContainer>
