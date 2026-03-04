@@ -54,6 +54,8 @@ export function WaveChart({ beach }: WaveChartProps) {
     return { chartData: data, dayBoundaries: boundaries }
   }, [beach.forecast])
 
+  const currentData = beach.forecast[0]
+
   return (
     <div className="bg-card rounded-xl border border-border p-5">
       <h3 className="font-mono font-bold text-card-foreground mb-1">
@@ -160,6 +162,59 @@ export function WaveChart({ beach }: WaveChartProps) {
             />
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Stats bar below chart */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-0 mt-4 border border-border rounded-lg overflow-hidden">
+        <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+            Altura Significativa
+          </span>
+          <span className="text-2xl font-bold text-foreground leading-tight mt-1">
+            {currentData.waveHeight}
+          </span>
+          <span className="text-xs text-muted-foreground">m</span>
+        </div>
+        <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+            Periodo de Pico
+          </span>
+          <span className="text-2xl font-bold text-foreground leading-tight mt-1">
+            {currentData.wavePeriod}
+          </span>
+          <span className="text-xs text-muted-foreground">s</span>
+        </div>
+        <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
+            Direcao de Pico
+          </span>
+          <div className="flex items-center gap-1 mt-1">
+            <span className="text-muted-foreground">{DIRECTION_ICONS[currentData.waveDirection]}</span>
+            <span className="text-2xl font-bold text-foreground leading-tight">
+              {currentData.waveDirection}
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center py-3 px-2 border-r border-border bg-background">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
+            Vento
+          </span>
+          <span className="text-2xl font-bold text-foreground leading-tight mt-1">
+            {currentData.windSpeed}
+          </span>
+          <span className="text-xs text-muted-foreground">km/h</span>
+        </div>
+        <div className="flex flex-col items-center justify-center py-3 px-2 bg-background col-span-2 sm:col-span-1">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
+            Direcao
+          </span>
+          <div className="flex items-center gap-1 mt-1">
+            <span className="text-muted-foreground">{DIRECTION_ICONS[currentData.windDirection]}</span>
+            <span className="text-2xl font-bold text-foreground leading-tight">
+              {currentData.windDirection}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   )
