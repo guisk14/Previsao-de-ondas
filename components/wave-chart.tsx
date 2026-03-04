@@ -165,7 +165,7 @@ export function WaveChart({ beach }: WaveChartProps) {
       </div>
 
       {/* Stats bar below chart */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-0 mt-4 border border-border rounded-lg overflow-hidden">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 mt-4 border border-border rounded-lg overflow-hidden">
         <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
           <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
             Altura Significativa
@@ -195,24 +195,16 @@ export function WaveChart({ beach }: WaveChartProps) {
             </span>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center py-3 px-2 border-r border-border bg-background">
+        <div className="flex flex-col items-center justify-center py-3 px-2 bg-background">
           <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
             Vento
           </span>
-          <span className="text-2xl font-bold text-foreground leading-tight mt-1">
-            {currentData.windSpeed}
-          </span>
-          <span className="text-xs text-muted-foreground">km/h</span>
-        </div>
-        <div className="flex flex-col items-center justify-center py-3 px-2 bg-background col-span-2 sm:col-span-1">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
-            Direcao
-          </span>
-          <div className="flex items-center gap-1 mt-1">
+          <div className="flex items-center gap-1.5 mt-1">
             <span className="text-muted-foreground">{DIRECTION_ICONS[currentData.windDirection]}</span>
             <span className="text-2xl font-bold text-foreground leading-tight">
-              {currentData.windDirection}
+              {currentData.windSpeed}
             </span>
+            <span className="text-xs text-muted-foreground self-end mb-0.5">km/h {currentData.windDirection}</span>
           </div>
         </div>
       </div>
