@@ -1,5 +1,7 @@
 export interface ForecastHour {
   hour: string
+  dayLabel: string
+  dayIndex: number
   waveHeight: number
   wavePeriod: number
   waveDirection: string
@@ -27,18 +29,37 @@ export interface TideEntry {
   type: "alta" | "baixa"
 }
 
+const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
+
 const generateForecast = (): ForecastHour[] => {
   const directions = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"]
-  const hours = ["06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"]
-  return hours.map((hour) => ({
-    hour,
-    waveHeight: +(Math.random() * 2.5 + 0.5).toFixed(1),
-    wavePeriod: Math.floor(Math.random() * 8 + 6),
-    waveDirection: directions[Math.floor(Math.random() * directions.length)],
-    windSpeed: Math.floor(Math.random() * 25 + 5),
-    windDirection: directions[Math.floor(Math.random() * directions.length)],
-    temperature: Math.floor(Math.random() * 6 + 14),
-  }))
+  const hours = [0, 3, 6, 9, 12, 15, 18, 21]
+  const entries: ForecastHour[] = []
+  const today = new Date()
+
+  for (let d = 0; d < 5; d++) {
+    const date = new Date(today)
+    date.setDate(today.getDate() + d)
+    const dayName = DAY_NAMES[date.getDay()]
+    const dayNum = date.getDate()
+    const dayLabel = `${dayName} (${dayNum})`
+
+    for (const h of hours) {
+      const baseHeight = 0.6 + Math.sin((d * 6 + h) * 0.18) * 0.6 + Math.random() * 0.4
+      entries.push({
+        hour: `${String(h).padStart(2, "0")}h`,
+        dayLabel,
+        dayIndex: d,
+        waveHeight: +Math.max(0.2, baseHeight).toFixed(1),
+        wavePeriod: +(Math.random() * 8 + 6).toFixed(1),
+        waveDirection: directions[Math.floor(Math.random() * directions.length)],
+        windSpeed: Math.floor(Math.random() * 20 + 5),
+        windDirection: directions[Math.floor(Math.random() * directions.length)],
+        temperature: Math.floor(Math.random() * 6 + 14),
+      })
+    }
+  }
+  return entries
 }
 
 export const beaches: Beach[] = [

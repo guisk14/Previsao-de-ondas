@@ -1,3 +1,6 @@
+"use client"
+
+import { useMemo } from "react"
 import { type Beach } from "@/lib/wave-data"
 import {
   Table,
@@ -13,6 +16,19 @@ interface ForecastTableProps {
 }
 
 export function ForecastTable({ beach }: ForecastTableProps) {
+  const groupedByDay = useMemo(() => {
+    const groups: { label: string; entries: typeof beach.forecast }[] = []
+    let currentLabel = ""
+    for (const entry of beach.forecast) {
+      if (entry.dayLabel !== currentLabel) {
+        currentLabel = entry.dayLabel
+        groups.push({ label: currentLabel, entries: [] })
+      }
+      groups[groups.length - 1].entries.push(entry)
+    }
+    return groups
+  }, [beach.forecast])
+
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden">
       <div className="px-5 py-4 border-b border-border">
@@ -20,12 +36,12 @@ export function ForecastTable({ beach }: ForecastTableProps) {
           Previsao Horaria — {beach.name}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Dados de swell, vento e temperatura ao longo do dia
+          5 dias de swell, vento e temperatura
         </p>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="border-border">
               <TableHead className="text-muted-foreground font-medium">Hora</TableHead>
               <TableHead className="text-muted-foreground font-medium">Ondas (m)</TableHead>
@@ -33,30 +49,45 @@ export function ForecastTable({ beach }: ForecastTableProps) {
               <TableHead className="text-muted-foreground font-medium">Dir. Ondas</TableHead>
               <TableHead className="text-muted-foreground font-medium">Vento (km/h)</TableHead>
               <TableHead className="text-muted-foreground font-medium">Dir. Vento</TableHead>
-              <TableHead className="text-muted-foreground font-medium">Temp (°C)</TableHead>
+              <TableHead className="text-muted-foreground font-medium">Temp</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {beach.forecast.map((entry, index) => (
-              <TableRow key={index} className="border-border hover:bg-secondary/50 transition-colors">
-                <TableCell className="font-mono font-medium text-card-foreground">
-                  {entry.hour}
-                </TableCell>
-                <TableCell>
-                  <span className={`font-mono font-bold ${getWaveColor(entry.waveHeight)}`}>
-                    {entry.waveHeight}
-                  </span>
-                </TableCell>
-                <TableCell className="font-mono text-card-foreground">{entry.wavePeriod}</TableCell>
-                <TableCell className="text-muted-foreground">{entry.waveDirection}</TableCell>
-                <TableCell>
-                  <span className={`font-mono ${getWindColor(entry.windSpeed)}`}>
-                    {entry.windSpeed}
-                  </span>
-                </TableCell>
-                <TableCell className="text-muted-foreground">{entry.windDirection}</TableCell>
-                <TableCell className="font-mono text-card-foreground">{entry.temperature}</TableCell>
-              </TableRow>
+            {groupedByDay.map((group) => (
+              <>
+                <TableRow key={`header-${group.label}`} className="border-border bg-secondary/60">
+                  <TableCell
+                    colSpan={7}
+                    className="font-mono font-bold text-sm text-primary py-2"
+                  >
+                    {group.label}
+                  </TableCell>
+                </TableRow>
+                {group.entries.map((entry, index) => (
+                  <TableRow
+                    key={`${group.label}-${index}`}
+                    className="border-border hover:bg-secondary/50 transition-colors"
+                  >
+                    <TableCell className="font-mono font-medium text-card-foreground">
+                      {entry.hour}
+                    </TableCell>
+                    <TableCell>
+                      <span className={`font-mono font-bold ${getWaveColor(entry.waveHeight)}`}>
+                        {entry.waveHeight}
+                      </span>
+                    </TableCell>
+                    <TableCell className="font-mono text-card-foreground">{entry.wavePeriod}</TableCell>
+                    <TableCell className="text-muted-foreground">{entry.waveDirection}</TableCell>
+                    <TableCell>
+                      <span className={`font-mono ${getWindColor(entry.windSpeed)}`}>
+                        {entry.windSpeed}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{entry.windDirection}</TableCell>
+                    <TableCell className="font-mono text-card-foreground">{entry.temperature}°C</TableCell>
+                  </TableRow>
+                ))}
+              </>
             ))}
           </TableBody>
         </Table>
