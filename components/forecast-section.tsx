@@ -24,8 +24,8 @@ export function ForecastSection() {
           <SpotSelector selectedBeach={selectedBeach} onSelect={setSelectedBeach} />
           <CurrentConditions beach={selectedBeach} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <WaveChart beach={selectedBeach} />
             <ForecastTable beach={selectedBeach} />
+            <WaveChart beach={selectedBeach} />
           </div>
         </div>
       </div>
