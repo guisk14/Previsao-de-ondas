@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState, useCallback } from "react"
 import { type Beach } from "@/lib/wave-data"
 import { ArrowUp, ArrowDown, ArrowUpRight, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpLeft, ArrowDownLeft } from "lucide-react"
 import {
@@ -54,7 +54,22 @@ export function WaveChart({ beach }: WaveChartProps) {
     return { chartData: data, dayBoundaries: boundaries }
   }, [beach.forecast])
 
-  const currentData = beach.forecast[0]
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  const activeData = hoveredIndex !== null ? beach.forecast[hoveredIndex] : beach.forecast[0]
+  const activeLabel = hoveredIndex !== null
+    ? `${activeData.dayLabel} - ${activeData.hour}`
+    : "Agora"
+
+  const handleMouseMove = useCallback((state: { activeTooltipIndex?: number }) => {
+    if (state?.activeTooltipIndex !== undefined) {
+      setHoveredIndex(state.activeTooltipIndex)
+    }
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null)
+  }, [])
 
   return (
     <div className="bg-card rounded-xl border border-border p-5">
@@ -82,6 +97,8 @@ export function WaveChart({ beach }: WaveChartProps) {
           <AreaChart
             data={chartData}
             margin={{ top: 10, right: 5, left: -15, bottom: 0 }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
           >
             <defs>
               <linearGradient id="waveGrad5d" x1="0" y1="0" x2="0" y2="1">
@@ -165,13 +182,21 @@ export function WaveChart({ beach }: WaveChartProps) {
       </div>
 
       {/* Stats bar below chart */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 mt-4 border border-border rounded-lg overflow-hidden">
+      <div className="flex items-center justify-between mt-4 mb-2 px-1">
+        <span className="text-xs font-mono text-muted-foreground">
+          Arraste no grafico para atualizar os dados abaixo
+        </span>
+        <span className="text-xs font-mono font-bold text-primary">
+          {activeLabel}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 border border-border rounded-lg overflow-hidden">
         <div className="flex flex-col items-center justify-center py-3 px-2 border-l-3 border-l-accent border-r border-border bg-background">
           <span className="text-[10px] font-bold tracking-wider uppercase text-destructive-foreground">
             Altura Significativa
           </span>
           <span className="text-2xl font-bold text-foreground leading-tight mt-1">
-            {currentData.waveHeight}
+            {activeData.waveHeight}
           </span>
           <span className="text-xs text-muted-foreground">m</span>
         </div>
@@ -180,7 +205,7 @@ export function WaveChart({ beach }: WaveChartProps) {
             Periodo de Pico
           </span>
           <span className="text-2xl font-bold text-foreground leading-tight mt-1">
-            {currentData.wavePeriod}
+            {activeData.wavePeriod}
           </span>
           <span className="text-xs text-muted-foreground">s</span>
         </div>
@@ -189,9 +214,9 @@ export function WaveChart({ beach }: WaveChartProps) {
             Direcao de Pico
           </span>
           <div className="flex items-center gap-1 mt-1">
-            <span className="text-muted-foreground">{DIRECTION_ICONS[currentData.waveDirection]}</span>
+            <span className="text-muted-foreground">{DIRECTION_ICONS[activeData.waveDirection]}</span>
             <span className="text-2xl font-bold text-foreground leading-tight">
-              {currentData.waveDirection}
+              {activeData.waveDirection}
             </span>
           </div>
         </div>
@@ -200,11 +225,11 @@ export function WaveChart({ beach }: WaveChartProps) {
             Vento
           </span>
           <div className="flex items-center gap-1.5 mt-1">
-            <span className="text-muted-foreground">{DIRECTION_ICONS[currentData.windDirection]}</span>
+            <span className="text-muted-foreground">{DIRECTION_ICONS[activeData.windDirection]}</span>
             <span className="text-2xl font-bold text-foreground leading-tight">
-              {currentData.windSpeed}
+              {activeData.windSpeed}
             </span>
-            <span className="text-xs text-muted-foreground self-end mb-0.5">km/h {currentData.windDirection}</span>
+            <span className="text-xs text-muted-foreground self-end mb-0.5">km/h {activeData.windDirection}</span>
           </div>
         </div>
       </div>
