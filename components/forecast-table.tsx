@@ -44,9 +44,9 @@ export function ForecastTable({ beach }: ForecastTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {todayForecast.map((entry, index) => (
+            {todayForecast.map((entry) => (
               <TableRow
-                key={index}
+                key={entry.hour}
                 className="border-border hover:bg-secondary/50 transition-colors"
               >
                 <TableCell className="font-mono font-medium text-card-foreground">

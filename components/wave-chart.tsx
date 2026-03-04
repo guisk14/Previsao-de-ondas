@@ -84,10 +84,9 @@ export function WaveChart({ beach }: WaveChartProps) {
               dataKey="index"
               tick={({ x, y, payload }) => {
                 const entry = chartData[payload.value]
-                if (!entry) return <text />
-                // Show label only at 00h and 12h to avoid crowding
+                if (!entry) return <g />
                 if (entry.shortLabel !== "00h" && entry.shortLabel !== "12h") {
-                  return <text />
+                  return <g />
                 }
                 return (
                   <text
