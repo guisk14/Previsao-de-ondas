@@ -13,14 +13,6 @@ interface ForecastTableProps {
 }
 
 export function ForecastTable({ beach }: ForecastTableProps) {
-  const groupedByDay: Record<string, typeof beach.forecast> = {}
-  for (const entry of beach.forecast) {
-    if (!groupedByDay[entry.dayLabel]) {
-      groupedByDay[entry.dayLabel] = []
-    }
-    groupedByDay[entry.dayLabel].push(entry)
-  }
-
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden">
       <div className="px-5 py-4 border-b border-border">
@@ -28,7 +20,7 @@ export function ForecastTable({ beach }: ForecastTableProps) {
           Previsao Horaria — {beach.name}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Dados de swell, vento e temperatura para os proximos dias
+          Dados de swell, vento e temperatura ao longo do dia
         </p>
       </div>
       <div className="overflow-x-auto">
@@ -45,45 +37,33 @@ export function ForecastTable({ beach }: ForecastTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Object.entries(groupedByDay).map(([dayLabel, entries]) => (
-              <>
-                <TableRow key={`day-${dayLabel}`} className="border-border bg-secondary/30">
-                  <TableCell
-                    colSpan={7}
-                    className="font-mono font-bold text-sm text-foreground py-2.5"
-                  >
-                    {dayLabel}
-                  </TableCell>
-                </TableRow>
-                {entries.map((entry, index) => (
-                  <TableRow
-                    key={`${dayLabel}-${index}`}
-                    className="border-border hover:bg-secondary/50 transition-colors"
-                  >
-                    <TableCell className="font-mono font-medium text-card-foreground">
-                      {entry.hour}
-                    </TableCell>
-                    <TableCell>
-                      <span className={`font-mono font-bold ${getWaveColor(entry.waveHeight)}`}>
-                        {entry.waveHeight}
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-mono text-card-foreground">
-                      {entry.wavePeriod}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{entry.waveDirection}</TableCell>
-                    <TableCell>
-                      <span className={`font-mono ${getWindColor(entry.windSpeed)}`}>
-                        {entry.windSpeed}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{entry.windDirection}</TableCell>
-                    <TableCell className="font-mono text-card-foreground">
-                      {entry.temperature}°C
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </>
+            {beach.forecast.map((entry, index) => (
+              <TableRow
+                key={index}
+                className="border-border hover:bg-secondary/50 transition-colors"
+              >
+                <TableCell className="font-mono font-medium text-card-foreground">
+                  {entry.hour}
+                </TableCell>
+                <TableCell>
+                  <span className={`font-mono font-bold ${getWaveColor(entry.waveHeight)}`}>
+                    {entry.waveHeight}
+                  </span>
+                </TableCell>
+                <TableCell className="font-mono text-card-foreground">
+                  {entry.wavePeriod}
+                </TableCell>
+                <TableCell className="text-muted-foreground">{entry.waveDirection}</TableCell>
+                <TableCell>
+                  <span className={`font-mono ${getWindColor(entry.windSpeed)}`}>
+                    {entry.windSpeed}
+                  </span>
+                </TableCell>
+                <TableCell className="text-muted-foreground">{entry.windDirection}</TableCell>
+                <TableCell className="font-mono text-card-foreground">
+                  {entry.temperature}°C
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
