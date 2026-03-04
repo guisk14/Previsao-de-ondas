@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { beaches } from "@/lib/wave-data"
 import { SpotSelector } from "./spot-selector"
-import { CurrentConditions } from "./current-conditions"
 import { ForecastTable } from "./forecast-table"
 import { WaveChart } from "./wave-chart"
 
@@ -22,11 +21,8 @@ export function ForecastSection() {
 
         <div className="flex flex-col gap-6">
           <SpotSelector selectedBeach={selectedBeach} onSelect={setSelectedBeach} />
-          <CurrentConditions beach={selectedBeach} />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <WaveChart beach={selectedBeach} />
-            <ForecastTable beach={selectedBeach} />
-          </div>
+          <WaveChart beach={selectedBeach} />
+          <ForecastTable beach={selectedBeach} />
         </div>
       </div>
     </section>
