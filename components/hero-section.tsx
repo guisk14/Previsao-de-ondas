@@ -21,7 +21,7 @@ export function HeroSection() {
           Saiba quando as melhores ondas vao chegar
         </h1>
         <p className="mt-4 text-primary-foreground/80 text-lg md:text-xl max-w-xl leading-relaxed">
-          Dados atualizados de swell, vento e mare para as principais praias de Portugal.
+          Dados atualizados de swell, vento e mare para as principais praias do litoral paulista.
         </p>
         <a
           href="#previsao"
