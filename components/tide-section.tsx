@@ -1,7 +1,42 @@
+"use client"
+
 import { ArrowUp, ArrowDown } from "lucide-react"
-import { tides } from "@/lib/wave-data"
+import { useTides } from "@/hooks/use-tides"
 
 export function TideSection() {
+  const { tides, loading } = useTides()
+
+  if (loading) {
+    return (
+      <section id="mares" className="py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4">
+          <p className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-2">
+            Mares
+          </p>
+          <h2 className="text-3xl md:text-4xl font-mono font-bold text-foreground text-balance mb-8">
+            Tabela de Mares de Hoje
+          </h2>
+          <div className="text-muted-foreground">Carregando dados de mares...</div>
+        </div>
+      </section>
+    )
+  }
+
+  if (tides.length === 0) {
+    return (
+      <section id="mares" className="py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4">
+          <p className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-2">
+            Mares
+          </p>
+          <h2 className="text-3xl md:text-4xl font-mono font-bold text-foreground text-balance mb-8">
+            Tabela de Mares de Hoje
+          </h2>
+          <div className="text-muted-foreground">Sem dados de mares para hoje.</div>
+        </div>
+      </section>
+    )
+  }
   return (
     <section id="mares" className="py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4">
