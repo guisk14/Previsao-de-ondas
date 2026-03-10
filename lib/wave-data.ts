@@ -199,10 +199,10 @@ export const beaches: Beach[] = [
 ]
 
 export const tides: TideEntry[] = [
-  { time: "01:20", height: 0.9, type: "alta" },
-  { time: "07:45", height: 0.2, type: "baixa" },
-  { time: "13:30", height: 1.0, type: "alta" },
-  { time: "19:50", height: 0.3, type: "baixa" },
+  { time: "04:10", height: 1.05, type: "alta" },
+  { time: "12:36", height: 0.42, type: "baixa" },
+  { time: "17:40", height: 1.15, type: "alta" },
+  { time: "23:23", height: 0.58, type: "baixa" },
 ]
 
 export function getRatingLabel(rating: number): string {
