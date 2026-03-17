@@ -8,32 +8,34 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
-          <Waves className="h-7 w-7 text-primary" />
-          <span className="text-xl font-mono font-bold tracking-tight text-foreground">
-            OndaViva
+          <span className="rounded-full bg-primary/10 p-1.5">
+            <Waves className="h-6 w-6 text-primary" />
           </span>
+          <span className="text-xl font-mono font-bold tracking-tight text-foreground">OndaViva</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="#previsao" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Previsao
-          </Link>
-          <Link href="#praias" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Praias
-          </Link>
-          <Link href="#mares" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Mares
-          </Link>
-          <Link href="#sobre" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Sobre
-          </Link>
+        <nav className="hidden items-center gap-2 rounded-full border border-border/80 bg-card/70 p-1 md:flex">
+          {[
+            ["#previsao", "Previsao"],
+            ["#praias", "Praias"],
+            ["#mares", "Mares"],
+            ["#sobre", "Sobre"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-foreground"
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
 
         <button
-          className="md:hidden text-foreground"
+          className="rounded-md p-1 text-foreground md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
         >
@@ -42,18 +44,34 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md">
-          <nav className="flex flex-col px-4 py-4 gap-3">
-            <Link href="#previsao" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+        <div className="border-t border-border/70 bg-background/95 px-4 py-4 backdrop-blur-md md:hidden">
+          <nav className="flex flex-col gap-2">
+            <Link
+              href="#previsao"
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-foreground"
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Previsao
             </Link>
-            <Link href="#praias" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+            <Link
+              href="#praias"
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-foreground"
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Praias
             </Link>
-            <Link href="#mares" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+            <Link
+              href="#mares"
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-foreground"
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Mares
             </Link>
-            <Link href="#sobre" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+            <Link
+              href="#sobre"
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-foreground"
+              onClick={() => setMobileMenuOpen(false)}
+            >
               Sobre
             </Link>
           </nav>
