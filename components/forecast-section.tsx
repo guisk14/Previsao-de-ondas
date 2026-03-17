@@ -6,6 +6,7 @@ import { SpotSelector } from "./spot-selector"
 import { CurrentConditions } from "./current-conditions"
 import { ForecastTable } from "./forecast-table"
 import { WaveChart } from "./wave-chart"
+import { WindDirectionTable } from "./wind-direction-table"
 
 export function ForecastSection() {
   const [selectedBeach, setSelectedBeach] = useState(beaches[0])
@@ -26,6 +27,9 @@ export function ForecastSection() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <ForecastTable beach={selectedBeach} />
             <WaveChart beach={selectedBeach} />
+          </div>
+          <div className="mt-4">
+            <WindDirectionTable beach={selectedBeach} />
           </div>
         </div>
       </div>
