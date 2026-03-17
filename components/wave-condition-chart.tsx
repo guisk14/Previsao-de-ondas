@@ -10,9 +10,7 @@ import {
   ArrowUp, ArrowDown, ArrowUpRight, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpLeft, ArrowDownLeft 
 } from "lucide-react"
 import {
-  AreaChart,
   Area,
-  LineChart,
   Line,
   XAxis,
   YAxis,
@@ -40,34 +38,32 @@ const DIRECTION_ICONS: Record<string, React.ReactNode> = {
 }
 
 export function WaveConditionChart({ beach }: WaveConditionChartProps) {
-  const [selectedDayIndex, setSelectedDayIndex] = useState(0)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-  const days = useMemo(() => {
-    const uniqueDays: { label: string; index: number }[] = []
-    const seen = new Set()
-    beach.forecast.forEach((entry) => {
-      if (!seen.has(entry.dayIndex)) {
-        seen.add(entry.dayIndex)
-        uniqueDays.push({ label: entry.dayLabel, index: entry.dayIndex })
-      }
-    })
-    return uniqueDays.slice(0, 5)
-  }, [beach.forecast])
+  const { chartData, dayBoundaries } = useMemo(() => {
+    const data = beach.forecast.map((entry, i) => ({
+      index: i,
+      hour: entry.hour,
+      dayLabel: entry.dayLabel,
+      dayIndex: entry.dayIndex,
+      altura: entry.waveHeight,
+      periodo: entry.wavePeriod,
+      vento: entry.windSpeed,
+      direcao: entry.waveDirection,
+      windDir: entry.windDirection,
+    }))
 
-  const chartData = useMemo(() => {
-    return beach.forecast
-      .filter(entry => entry.dayIndex === selectedDayIndex)
-      .map((entry, i) => ({
-        index: i,
-        hour: entry.hour,
-        altura: entry.waveHeight,
-        periodo: entry.wavePeriod,
-        vento: entry.windSpeed,
-        direcao: entry.waveDirection,
-        windDir: entry.windDirection,
-      }))
-  }, [beach.forecast, selectedDayIndex])
+    const boundaries: { index: number; label: string }[] = []
+    let lastDay = -1
+    for (const d of data) {
+      if (d.dayIndex !== lastDay) {
+        lastDay = d.dayIndex
+        boundaries.push({ index: d.index, label: d.dayLabel })
+      }
+    }
+
+    return { chartData: data, dayBoundaries: boundaries }
+  }, [beach.forecast])
 
   const activeData = useMemo(() => {
     if (hoveredIndex !== null && chartData[hoveredIndex]) {
@@ -95,41 +91,29 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
           <h3 className="text-lg font-bold text-foreground">Condição das Ondas</h3>
         </div>
         <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider mb-4">
-          Altura • Período • Vento
+          Altura • Período • Vento (Previsão de 5 Dias)
         </p>
 
-        {/* Seletores de Dia (Estilo Abas) */}
+        {/* Cabeçalhos de Dia Alinhados */}
         <div className="flex border-b border-border">
-          {days.map((day) => {
-            const isSelected = selectedDayIndex === day.index
-            return (
-              <button
-                key={day.index}
-                onClick={() => setSelectedDayIndex(day.index)}
-                className={cn(
-                  "px-6 py-2 text-sm font-bold transition-all relative",
-                  isSelected 
-                    ? "text-foreground" 
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {day.label.split(" ")[0]} {day.label.split(" ")[1].replace("(", "").replace(")", "")}
-                {isSelected && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                )}
-              </button>
-            )
-          })}
+          {dayBoundaries.map((day) => (
+            <div
+              key={day.index}
+              className="flex-1 text-center py-2 text-[10px] font-bold uppercase tracking-tighter text-muted-foreground border-r border-border last:border-r-0 bg-muted/5"
+            >
+              {day.label.split(" ")[0]} {day.label.split(" ")[1].replace("(", "").replace(")", "")}
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Gráfico */}
-      <div className="p-6 bg-background/50">
+      <div className="p-4 bg-background/50">
         <div className="h-64 w-full relative">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
-              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             >
@@ -145,14 +129,33 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
               <XAxis 
-                dataKey="hour" 
+                dataKey="index" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
+                tick={({ x, y, payload }) => {
+                  const entry = chartData[payload.value]
+                  if (!entry || (entry.hour !== "00h" && entry.hour !== "12h")) return <g />
+                  return (
+                    <text x={x} y={y + 12} textAnchor="middle" fill="#94a3b8" fontSize={9} fontWeight="bold">
+                      {entry.hour}
+                    </text>
+                  )
+                }}
+                interval={0}
               />
               <YAxis hide domain={[0, 'dataMax + 2']} />
               <Tooltip cursor={{ stroke: '#ef4444', strokeWidth: 1 }} content={<></>} />
               
+              {/* Linhas Divisórias de Dia */}
+              {dayBoundaries.slice(1).map((day) => (
+                <ReferenceLine
+                  key={`sep-${day.index}`}
+                  x={day.index}
+                  stroke="rgba(0,0,0,0.1)"
+                  strokeWidth={1}
+                />
+              ))}
+
               {/* Vento (Área Cinza ao Fundo) */}
               <Area
                 type="monotone"
@@ -246,6 +249,13 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
             {activeData.vento} <span className="text-[10px] font-normal text-muted-foreground ml-1">{activeData.windDir}</span>
           </div>
         </div>
+      </div>
+      
+      {/* Indicador de Data/Hora Ativa */}
+      <div className="bg-primary/5 py-2 px-4 border-t border-border text-center">
+        <span className="text-[10px] font-mono font-bold text-primary uppercase tracking-widest">
+          {activeData.dayLabel} — {activeData.hour}
+        </span>
       </div>
     </div>
   )
