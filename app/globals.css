@@ -121,6 +121,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: linear-gradient(to bottom, oklch(0.97 0.005 220), oklch(0.99 0.004 220));
+  }
+
+  ::selection {
+    background: oklch(0.6 0.16 215 / 0.35);
   }
 }
 
