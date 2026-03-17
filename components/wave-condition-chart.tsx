@@ -84,36 +84,24 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
 
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
-      {/* Header */}
-      <div className="px-6 py-5 border-b border-border bg-muted/10">
-        <div className="flex items-center gap-2 mb-1">
+      {/* Header Simplificado */}
+      <div className="px-6 py-4 border-b border-border bg-muted/5">
+        <div className="flex items-center gap-2">
           <Waves className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-bold text-foreground">Condição das Ondas</h3>
-        </div>
-        <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider mb-4">
-          Altura • Período • Vento (Previsão de 5 Dias)
-        </p>
-
-        {/* Cabeçalhos de Dia Alinhados */}
-        <div className="flex border-b border-border">
-          {dayBoundaries.map((day) => (
-            <div
-              key={day.index}
-              className="flex-1 text-center py-2 text-[10px] font-bold uppercase tracking-tighter text-muted-foreground border-r border-border last:border-r-0 bg-muted/5"
-            >
-              {day.label.split(" ")[0]} {day.label.split(" ")[1].replace("(", "").replace(")", "")}
-            </div>
-          ))}
+          <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest ml-auto">
+            Altura • Período • Vento
+          </span>
         </div>
       </div>
 
-      {/* Gráfico */}
+      {/* Gráfico Unificado com Cabeçalhos de Dia */}
       <div className="p-4 bg-background/50">
-        <div className="h-64 w-full relative">
+        <div className="h-72 w-full relative">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
-              margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
+              margin={{ top: 30, right: 0, left: -20, bottom: 0 }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             >
@@ -128,21 +116,38 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+              
+              {/* Eixo X com Dias e Horas Integrados */}
               <XAxis 
                 dataKey="index" 
                 axisLine={false} 
                 tickLine={false} 
                 tick={({ x, y, payload }) => {
                   const entry = chartData[payload.value]
-                  if (!entry || (entry.hour !== "00h" && entry.hour !== "12h")) return <g />
+                  if (!entry) return <g />
+                  
+                  // Mostrar nome do dia no topo (alinhado com 12h ou início do dia)
+                  const isDayLabel = entry.hour === "12h"
+                  const isHourLabel = entry.hour === "00h" || entry.hour === "12h"
+                  
                   return (
-                    <text x={x} y={y + 12} textAnchor="middle" fill="#94a3b8" fontSize={9} fontWeight="bold">
-                      {entry.hour}
-                    </text>
+                    <g>
+                      {isDayLabel && (
+                        <text x={x} y={-15} textAnchor="middle" fill="currentColor" className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">
+                          {entry.dayLabel.split(" ")[0]} {entry.dayLabel.split(" ")[1].replace("(", "").replace(")", "")}
+                        </text>
+                      )}
+                      {isHourLabel && (
+                        <text x={x} y={y + 12} textAnchor="middle" fill="#94a3b8" fontSize={9} fontWeight="bold">
+                          {entry.hour}
+                        </text>
+                      )}
+                    </g>
                   )
                 }}
                 interval={0}
               />
+              
               <YAxis hide domain={[0, 'dataMax + 2']} />
               <Tooltip cursor={{ stroke: '#ef4444', strokeWidth: 1 }} content={<></>} />
               
@@ -189,7 +194,7 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
           </ResponsiveContainer>
           
           {/* Legenda Customizada */}
-          <div className="flex justify-center gap-6 mt-2">
+          <div className="flex justify-center gap-6 mt-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[#0ea5e9]" />
               <span className="text-[10px] font-bold text-muted-foreground uppercase">Altura</span>
