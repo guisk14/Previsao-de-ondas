@@ -25,11 +25,16 @@ export function ForecastSection() {
           <SpotSelector selectedBeach={selectedBeach} onSelect={setSelectedBeach} />
           <CurrentConditions beach={selectedBeach} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <ForecastTable beach={selectedBeach} />
-            <WaveConditionChart beach={selectedBeach} />
-          </div>
-          <div className="mt-4">
-            <WindDirectionTable beach={selectedBeach} />
+            {/* Coluna da Esquerda: Gráfico de Ondas */}
+            <div className="flex flex-col gap-6">
+              <WaveConditionChart beach={selectedBeach} />
+            </div>
+
+            {/* Coluna da Direita: Tabelas Empilhadas */}
+            <div className="flex flex-col gap-6">
+              <ForecastTable beach={selectedBeach} />
+              <WindDirectionTable beach={selectedBeach} />
+            </div>
           </div>
         </div>
       </div>
