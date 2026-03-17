@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt">
+    <html lang="pt" class="dark">
       <body className={`${_inter.variable} ${_spaceGrotesk.variable} font-sans antialiased`}>
         {children}
         <Analytics />
