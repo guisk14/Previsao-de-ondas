@@ -5,7 +5,7 @@ import { beaches } from "@/lib/wave-data"
 import { SpotSelector } from "./spot-selector"
 import { CurrentConditions } from "./current-conditions"
 import { ForecastTable } from "./forecast-table"
-import { WaveChart } from "./wave-chart"
+import { WaveConditionChart } from "./wave-condition-chart"
 import { WindDirectionTable } from "./wind-direction-table"
 
 export function ForecastSection() {
@@ -26,7 +26,7 @@ export function ForecastSection() {
           <CurrentConditions beach={selectedBeach} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <ForecastTable beach={selectedBeach} />
-            <WaveChart beach={selectedBeach} />
+            <WaveConditionChart beach={selectedBeach} />
           </div>
           <div className="mt-4">
             <WindDirectionTable beach={selectedBeach} />
