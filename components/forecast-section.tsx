@@ -23,7 +23,7 @@ export function ForecastSection() {
         <div className="flex flex-col gap-6">
           <SpotSelector selectedBeach={selectedBeach} onSelect={setSelectedBeach} />
           <CurrentConditions beach={selectedBeach} />
-          <div className="flex flex-col gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <ForecastTable beach={selectedBeach} />
             <WaveChart beach={selectedBeach} />
           </div>
