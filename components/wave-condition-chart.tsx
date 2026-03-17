@@ -84,24 +84,24 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
 
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
-      {/* Header Simplificado */}
-      <div className="px-6 py-4 border-b border-border bg-muted/5">
+      {/* Header Compacto */}
+      <div className="px-6 py-3 border-b border-border bg-muted/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Waves className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-bold text-foreground">Condição das Ondas</h3>
-          <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest ml-auto">
-            Altura • Período • Vento
-          </span>
+          <Waves className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-bold text-foreground">Condição das Ondas</h3>
         </div>
+        <span className="text-[9px] text-muted-foreground font-mono uppercase tracking-widest">
+          Altura • Período • Vento
+        </span>
       </div>
 
-      {/* Gráfico Unificado com Cabeçalhos de Dia */}
-      <div className="p-4 bg-background/50">
+      {/* Gráfico Unificado com Cabeçalhos de Dia - Espaço Removido */}
+      <div className="bg-background/50 pt-2 pb-4 px-2">
         <div className="h-72 w-full relative">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
-              margin={{ top: 30, right: 0, left: -20, bottom: 0 }}
+              margin={{ top: 25, right: 0, left: -20, bottom: 0 }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             >
@@ -133,12 +133,12 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
                   return (
                     <g>
                       {isDayLabel && (
-                        <text x={x} y={-15} textAnchor="middle" fill="currentColor" className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">
+                        <text x={x} y={-12} textAnchor="middle" fill="currentColor" className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">
                           {entry.dayLabel.split(" ")[0]} {entry.dayLabel.split(" ")[1].replace("(", "").replace(")", "")}
                         </text>
                       )}
                       {isHourLabel && (
-                        <text x={x} y={y + 12} textAnchor="middle" fill="#94a3b8" fontSize={9} fontWeight="bold">
+                        <text x={x} y={y + 10} textAnchor="middle" fill="#94a3b8" fontSize={9} fontWeight="bold">
                           {entry.hour}
                         </text>
                       )}
@@ -158,6 +158,7 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
                   x={day.index}
                   stroke="rgba(0,0,0,0.1)"
                   strokeWidth={1}
+                  label={{ position: 'top', value: '', fill: 'rgba(0,0,0,0.1)', fontSize: 10 }}
                 />
               ))}
 
@@ -168,6 +169,7 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
                 stroke="none"
                 fill="url(#colorVento)"
                 yAxisId={0}
+                animationDuration={500}
               />
               
               {/* Altura (Área Azul) */}
@@ -179,6 +181,7 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
                 fill="url(#colorAltura)"
                 dot={{ r: 0 }}
                 activeDot={{ r: 4, stroke: '#fff', strokeWidth: 2 }}
+                animationDuration={500}
               />
               
               {/* Período (Linha Vermelha) */}
@@ -189,23 +192,24 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
                 strokeWidth={2}
                 dot={{ r: 0 }}
                 activeDot={{ r: 4, stroke: '#fff', strokeWidth: 2 }}
+                animationDuration={500}
               />
             </ComposedChart>
           </ResponsiveContainer>
           
-          {/* Legenda Customizada */}
-          <div className="flex justify-center gap-6 mt-4">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#0ea5e9]" />
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Altura</span>
+          {/* Legenda Customizada Compacta */}
+          <div className="flex justify-center gap-4 mt-2">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-[#0ea5e9]" />
+              <span className="text-[9px] font-bold text-muted-foreground uppercase">Altura</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#94a3b8]" />
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Vento</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-[#94a3b8]" />
+              <span className="text-[9px] font-bold text-muted-foreground uppercase">Vento</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Período</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-[#ef4444]" />
+              <span className="text-[9px] font-bold text-muted-foreground uppercase">Período</span>
             </div>
           </div>
         </div>
@@ -213,52 +217,52 @@ export function WaveConditionChart({ beach }: WaveConditionChartProps) {
 
       {/* Rodapé Detalhado */}
       <div className="grid grid-cols-2 md:grid-cols-4 border-t border-border bg-muted/5">
-        <div className="p-4 border-r border-border flex flex-col items-center justify-center">
-          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-            <Waves className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Altura</span>
+        <div className="p-3 border-r border-border flex flex-col items-center justify-center">
+          <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
+            <Waves className="h-3 w-3" />
+            <span className="text-[9px] font-bold uppercase tracking-tighter">Altura</span>
           </div>
-          <div className="text-xl font-mono font-bold text-foreground">
-            {activeData.altura.toFixed(1)} <span className="text-xs font-normal text-muted-foreground">m</span>
+          <div className="text-lg font-mono font-bold text-foreground">
+            {activeData.altura.toFixed(1)} <span className="text-[10px] font-normal text-muted-foreground">m</span>
           </div>
         </div>
         
-        <div className="p-4 border-r border-border flex flex-col items-center justify-center">
-          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-            <Clock className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Período</span>
+        <div className="p-3 border-r border-border flex flex-col items-center justify-center">
+          <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
+            <Clock className="h-3 w-3" />
+            <span className="text-[9px] font-bold uppercase tracking-tighter">Período</span>
           </div>
-          <div className="text-xl font-mono font-bold text-foreground">
-            {activeData.periodo.toFixed(1)} <span className="text-xs font-normal text-muted-foreground">s</span>
+          <div className="text-lg font-mono font-bold text-foreground">
+            {activeData.periodo.toFixed(1)} <span className="text-[10px] font-normal text-muted-foreground">s</span>
           </div>
         </div>
 
-        <div className="p-4 border-r border-border flex flex-col items-center justify-center">
-          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-            <Navigation2 className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Direção</span>
+        <div className="p-3 border-r border-border flex flex-col items-center justify-center">
+          <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
+            <Navigation2 className="h-3 w-3" />
+            <span className="text-[9px] font-bold uppercase tracking-tighter">Direção</span>
           </div>
-          <div className="flex items-center gap-1 text-xl font-mono font-bold text-foreground">
+          <div className="flex items-center gap-1 text-lg font-mono font-bold text-foreground">
             <span className="text-primary">{DIRECTION_ICONS[activeData.direcao]}</span>
             {activeData.direcao}
           </div>
         </div>
 
-        <div className="p-4 flex flex-col items-center justify-center">
-          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-            <Wind className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Vento</span>
+        <div className="p-3 flex flex-col items-center justify-center">
+          <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
+            <Wind className="h-3 w-3" />
+            <span className="text-[9px] font-bold uppercase tracking-tighter">Vento</span>
           </div>
-          <div className="flex items-center gap-1 text-xl font-mono font-bold text-foreground">
+          <div className="flex items-center gap-1 text-lg font-mono font-bold text-foreground">
             <span className="text-muted-foreground">{DIRECTION_ICONS[activeData.windDir]}</span>
-            {activeData.vento} <span className="text-[10px] font-normal text-muted-foreground ml-1">{activeData.windDir}</span>
+            {activeData.vento} <span className="text-[9px] font-normal text-muted-foreground ml-1">{activeData.windDir}</span>
           </div>
         </div>
       </div>
       
-      {/* Indicador de Data/Hora Ativa */}
-      <div className="bg-primary/5 py-2 px-4 border-t border-border text-center">
-        <span className="text-[10px] font-mono font-bold text-primary uppercase tracking-widest">
+      {/* Indicador de Data/Hora Ativa Compacto */}
+      <div className="bg-primary/5 py-1.5 px-4 border-t border-border text-center">
+        <span className="text-[9px] font-mono font-bold text-primary uppercase tracking-widest">
           {activeData.dayLabel} — {activeData.hour}
         </span>
       </div>
