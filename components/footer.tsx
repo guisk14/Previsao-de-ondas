@@ -11,7 +11,7 @@ export function Footer() {
               <span className="text-lg font-mono font-bold text-card-foreground">OndaViva</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Previsao detalhada das ondas para as melhores praias de Portugal.
+              Previsao detalhada das ondas para as melhores praias do litoral paulista.
               Dados atualizados para surfistas e amantes do oceano.
             </p>
           </div>
@@ -20,16 +20,16 @@ export function Footer() {
             <h4 className="font-mono font-bold text-card-foreground mb-3">Praias Populares</h4>
             <ul className="flex flex-col gap-2">
               <li className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                Supertubos, Peniche
+                Enseada, Guaruja
               </li>
               <li className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                {"Ribeira d'Ilhas, Ericeira"}
+                Tombo, Guaruja
               </li>
               <li className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                Praia do Norte, Nazare
+                Pitangueiras, Guaruja
               </li>
               <li className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                Praia do Tonel, Sagres
+                Praia Brava, Bertioga
               </li>
             </ul>
           </div>

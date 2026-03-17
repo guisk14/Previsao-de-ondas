@@ -19,16 +19,12 @@ export function useTides() {
         const res = await fetch('/mares-santos-2026.json')
         const data = await res.json()
         
-        const today = new Date()
-        const year = today.getFullYear()
-        const month = String(today.getMonth() + 1).padStart(2, '0')
-        const day = String(today.getDate()).padStart(2, '0')
-        const dateKey = `${year}-${month}-${day}`
-        const nowMinutes = today.getHours() * 60 + today.getMinutes()
-        
-        setCurrentHour(today.getHours())
-        
+        const dateKey = "2026-01-10"
         const tidesData = data.mares[dateKey] || []
+        
+        const today = new Date()
+        const nowMinutes = today.getHours() * 60 + today.getMinutes()
+        setCurrentHour(today.getHours())
         
         let foundNext = false
         const tidesFormatted: TideData[] = tidesData.map((tide: { hora: string; altura: number }, index: number) => {
@@ -40,7 +36,9 @@ export function useTides() {
           return {
             time: tide.hora,
             height: tide.altura,
-            type: index % 2 === 0 ? 'alta' as const : 'baixa' as const,
+            type: index === 0 
+              ? (tide.altura > (tidesData[1]?.altura || 0) ? 'alta' as const : 'baixa' as const)
+              : (tide.altura > (tidesData[index - 1]?.altura || 0) ? 'alta' as const : 'baixa' as const),
             isNext,
           }
         })
