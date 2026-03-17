@@ -30,7 +30,7 @@ export function ForecastTable({ beach }: ForecastTableProps) {
       }
     })
     
-    return uniqueDays.slice(0, 5) // Mostra apenas os próximos 5 dias
+    return uniqueDays.slice(0, 5)
   }, [beach.forecast])
 
   const filteredForecast = useMemo(() => {
@@ -38,15 +38,15 @@ export function ForecastTable({ beach }: ForecastTableProps) {
   }, [beach.forecast, selectedDayIndex])
 
   return (
-    <div className="bg-[#121212] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
-      {/* Header com Título */}
-      <div className="px-6 py-5 border-b border-white/5">
-        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40 mb-4">
+    <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+      {/* Header com Título e Seletores */}
+      <div className="px-5 py-5 border-b border-border bg-muted/30">
+        <h3 className="text-sm font-mono font-bold uppercase tracking-widest text-muted-foreground mb-4">
           Previsão Detalhada de Ondas (Diário)
         </h3>
         
-        {/* Seletores de Dia */}
-        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+        {/* Seletores de Dia com Estilo OndaViva */}
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
           {days.map((day) => {
             const [name, date] = day.label.split(" ")
             const isSelected = selectedDayIndex === day.index
@@ -56,30 +56,30 @@ export function ForecastTable({ beach }: ForecastTableProps) {
                 key={day.index}
                 onClick={() => setSelectedDayIndex(day.index)}
                 className={cn(
-                  "flex flex-col items-center justify-center min-w-[80px] py-3 rounded-xl transition-all duration-200",
+                  "flex flex-col items-center justify-center min-w-[70px] py-2.5 rounded-lg border transition-all duration-200",
                   isSelected 
-                    ? "bg-[#0099ff] text-white shadow-[0_0_20px_rgba(0,153,255,0.3)]" 
-                    : "bg-white/5 text-white/40 hover:bg-white/10"
+                    ? "bg-primary border-primary text-primary-foreground shadow-md" 
+                    : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 )}
               >
-                <span className="text-[10px] font-bold uppercase tracking-wider mb-1">{name}</span>
-                <span className="text-lg font-bold">{date.replace("(", "").replace(")", "")}</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-tighter mb-0.5">{name}</span>
+                <span className="text-base font-mono font-bold">{date.replace("(", "").replace(")", "")}</span>
               </button>
             )
           })}
         </div>
       </div>
 
-      {/* Tabela de Previsão */}
+      {/* Tabela de Previsão com Estilo OndaViva */}
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader>
-            <TableRow className="border-white/5 hover:bg-transparent">
-              <TableHead className="text-[10px] font-bold uppercase tracking-widest text-white/20 h-12 px-6">Hora</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-widest text-white/20 h-12">Altura</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-widest text-white/20 h-12">Período (s)</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-widest text-white/20 h-12">Dir.</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-widest text-white/20 h-12 pr-6">Vento</TableHead>
+          <TableHeader className="bg-muted/50">
+            <TableRow className="border-border hover:bg-transparent">
+              <TableHead className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground h-10 px-6">Hora</TableHead>
+              <TableHead className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground h-10">Altura</TableHead>
+              <TableHead className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground h-10">Período (s)</TableHead>
+              <TableHead className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground h-10">Dir.</TableHead>
+              <TableHead className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground h-10 pr-6">Vento</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -87,31 +87,34 @@ export function ForecastTable({ beach }: ForecastTableProps) {
               <TableRow
                 key={`${entry.dayIndex}-${entry.hour}`}
                 className={cn(
-                  "border-white/5 transition-colors",
-                  idx % 2 === 0 ? "bg-white/[0.02]" : "bg-transparent",
-                  "hover:bg-white/[0.05]"
+                  "border-border transition-colors",
+                  idx % 2 === 0 ? "bg-background" : "bg-muted/20",
+                  "hover:bg-primary/5"
                 )}
               >
-                <TableCell className="font-mono text-sm font-medium text-white/90 px-6 py-4">
+                <TableCell className="font-mono text-sm font-bold text-foreground px-6 py-3.5">
                   {entry.hour.replace("h", ":00")}
                 </TableCell>
                 <TableCell>
-                  <span className="font-mono text-sm font-bold text-[#0099ff]">
+                  <span className={cn(
+                    "font-mono text-sm font-bold",
+                    entry.waveHeight >= 1.5 ? "text-primary" : "text-accent"
+                  )}>
                     {entry.waveHeight.toFixed(1)} m
                   </span>
                 </TableCell>
-                <TableCell className="font-mono text-sm text-white/70">
+                <TableCell className="font-mono text-sm text-foreground/80">
                   {entry.wavePeriod.toFixed(1)}
                 </TableCell>
-                <TableCell className="text-sm text-white/70">
+                <TableCell className="text-sm text-muted-foreground font-medium">
                   {entry.waveDirection}
                 </TableCell>
                 <TableCell className="pr-6">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm text-white/90">
-                      {entry.windSpeed} <span className="text-[10px] text-white/40">km/h</span>
+                    <span className="font-mono text-sm text-foreground/90">
+                      {entry.windSpeed} <span className="text-[10px] text-muted-foreground">km/h</span>
                     </span>
-                    <span className="text-[10px] font-bold text-white/40">{entry.windDirection}</span>
+                    <span className="text-[10px] font-mono font-bold text-primary/70">{entry.windDirection}</span>
                   </div>
                 </TableCell>
               </TableRow>
